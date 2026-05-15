@@ -30,6 +30,7 @@ from .utils import (
     OTP_EXPIRES_MINUTES,
     otp_expiration_time,
     send_telegram_otp,
+    send_sms_otp,
     success_response,
 )
 
@@ -84,8 +85,6 @@ class OTPSendView(APIView):
         lang = get_request_lang(request)
         if is_test_login(phone):
             return success_response(_("SMS sent successfully."))
-        if not is_telegram_configured():
-            return error_response(_("Telegram bot not configured."), status.HTTP_503_SERVICE_UNAVAILABLE)
 
         active_otp = (
             OTP.objects.filter(phone=phone, purpose=OTP.PURPOSE_LOGIN, is_used=False, expires_at__gt=timezone.now())
@@ -105,10 +104,19 @@ class OTPSendView(APIView):
             purpose=OTP.PURPOSE_LOGIN,
             expires_at=otp_expiration_time(),
         )
-        if not send_telegram_otp(phone, otp.code, lang):
+        
+        # Try sending via SMS service first
+        sent = send_sms_otp(phone, otp.code, lang)
+        
+        # Fallback to Telegram if SMS fails
+        if not sent and is_telegram_configured():
+            sent = send_telegram_otp(phone, otp.code, lang)
+            
+        if not sent:
             otp.is_used = True
             otp.save(update_fields=["is_used"])
             return error_response(_("Failed to send SMS."), status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
         return success_response(_("SMS sent successfully."))
 
 
@@ -123,8 +131,6 @@ class OTPResendView(APIView):
         lang = get_request_lang(request)
         if is_test_login(phone):
             return success_response(_("SMS resent successfully."))
-        if not is_telegram_configured():
-            return error_response(_("Telegram bot not configured."), status.HTTP_503_SERVICE_UNAVAILABLE)
 
         OTP.objects.filter(phone=phone, purpose=OTP.PURPOSE_LOGIN, is_used=False).update(is_used=True)
         otp = OTP.objects.create(
@@ -133,10 +139,19 @@ class OTPResendView(APIView):
             purpose=OTP.PURPOSE_LOGIN,
             expires_at=otp_expiration_time(),
         )
-        if not send_telegram_otp(phone, otp.code, lang):
+        
+        # Try sending via SMS service first
+        sent = send_sms_otp(phone, otp.code, lang)
+        
+        # Fallback to Telegram if SMS fails
+        if not sent and is_telegram_configured():
+            sent = send_telegram_otp(phone, otp.code, lang)
+            
+        if not sent:
             otp.is_used = True
             otp.save(update_fields=["is_used"])
             return error_response(_("Failed to send SMS."), status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
         return success_response(_("SMS resent successfully."))
 
 
@@ -342,8 +357,6 @@ class ProfileDeleteOTPSendView(APIView):
             return error_response(_("User is inactive."), status.HTTP_400_BAD_REQUEST)
         if is_test_delete(user.phone):
             return success_response(_("SMS sent successfully."))
-        if not is_telegram_configured():
-            return error_response(_("Telegram bot not configured."), status.HTTP_503_SERVICE_UNAVAILABLE)
 
         active_otp = (
             OTP.objects.filter(
@@ -370,7 +383,15 @@ class ProfileDeleteOTPSendView(APIView):
         )
 
         lang = get_request_lang(request)
-        if not send_telegram_otp(user.phone, otp.code, lang):
+        
+        # Try sending via SMS service first
+        sent = send_sms_otp(user.phone, otp.code, lang)
+        
+        # Fallback to Telegram if SMS fails
+        if not sent and is_telegram_configured():
+            sent = send_telegram_otp(user.phone, otp.code, lang)
+            
+        if not sent:
             otp.is_used = True
             otp.save(update_fields=["is_used"])
             return error_response(_("Failed to send SMS."), status.HTTP_500_INTERNAL_SERVER_ERROR)

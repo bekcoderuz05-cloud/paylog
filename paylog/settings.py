@@ -202,4 +202,6 @@ FCM_SERVER_KEY = os.getenv("FCM_SERVER_KEY", "")
 
 FCM_SERVICE_ACCOUNT_PATH = os.getenv("FCM_SERVICE_ACCOUNT_PATH", "serviceAccountKey.json")
 
+DEVSMS_TOKEN = os.getenv("DEVSMS_TOKEN", "")
+
 

@@ -6,6 +6,7 @@ import logging
 import random
 import urllib.parse
 import urllib.request
+from .services.sms_service import send_sms
 
 
 OTP_EXPIRES_MINUTES = 2
@@ -68,4 +69,15 @@ def send_telegram_otp(phone, code, lang="en"):
     except Exception:
         logging.getLogger(__name__).exception("Failed to send SMS via Telegram.")
         return False
+
+
+def send_sms_otp(phone, code, lang="en"):
+    # SMS provayderda tasdiqlangan shablon asosida ko'p tilli xabarlar
+    messages = {
+        "uz": f"Hurmatli Obidov Saidkamol! Mojaz Market Hisobingizni tasdiqlash kodi: {code}. Hisobingizni o'z vaqtida to'ldiring.",
+        "ru": f"Уважаемый Обидов Саидкамол! Код подтверждения Mojaz Market: {code}. Пожалуйста, своевременно пополняйте счет.",
+        "en": f"Dear Obidov Saidkamol! Mojaz Market verification code: {code}. Please top up your account in time.",
+    }
+    message = messages.get(lang) or messages["uz"]
+    return send_sms(phone, message)
 
