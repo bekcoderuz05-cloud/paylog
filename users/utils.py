@@ -4,8 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 import logging
 import random
-import urllib.parse
-import urllib.request
+import requests
 from .services.sms_service import send_sms
 
 
@@ -61,10 +60,9 @@ def send_telegram_otp(phone, code, lang="en"):
 
     try:
         url = f"https://api.telegram.org/bot{token}/sendMessage"
-        payload = urllib.parse.urlencode({"chat_id": chat_id, "text": message}).encode("utf-8")
-        request = urllib.request.Request(url, data=payload)
-        with urllib.request.urlopen(request, timeout=5) as response:
-            response.read()
+        payload = {"chat_id": chat_id, "text": message}
+        response = requests.post(url, data=payload, timeout=5)
+        response.raise_for_status()
         return True
     except Exception:
         logging.getLogger(__name__).exception("Failed to send SMS via Telegram.")
