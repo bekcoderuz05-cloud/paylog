@@ -72,7 +72,7 @@ def send_telegram_otp(phone, code, lang="en"):
 def send_sms_otp(phone, code, lang="en"):
     # SMS provayderda tasdiqlangan shablon asosida ko'p tilli xabarlar
     messages = {
-        "uz": f"<#> Paylog tasdiqlash kodi: {code}\nHech kimga bermang.\nhy0K00dP38S",
+        "uz": f"<#>Paylog platformasi: Amaliyotni tasdiqlash kodi: {code}\nhy0K00dP38S",
         "ru": f"Платформа Paylog: Код подтверждения операции: {code}\nhy0K00dP38S",
         "en": f"Paylog Platform: Operation confirmation code: {code}\nhy0K00dP38S",
     }
