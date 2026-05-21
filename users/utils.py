@@ -72,9 +72,9 @@ def send_telegram_otp(phone, code, lang="en"):
 def send_sms_otp(phone, code, lang="en"):
     # SMS provayderda tasdiqlangan shablon asosida ko'p tilli xabarlar
     messages = {
-        "uz": f"Hurmatli Obidov Saidkamol! Mojaz Market Hisobingizni tasdiqlash kodi: {code}. Hisobingizni o'z vaqtida to'ldiring.",
-        "ru": f"Уважаемый Обидов Саидкамол! Код подтверждения Mojaz Market: {code}. Пожалуйста, своевременно пополняйте счет.",
-        "en": f"Dear Obidov Saidkamol! Mojaz Market verification code: {code}. Please top up your account in time.",
+        "uz": f"<#> Paylog tasdiqlash kodi: {code}\nHech kimga bermang.\nhy0K00dP38S",
+        "ru": f"Платформа Paylog: Код подтверждения операции: {code}\nhy0K00dP38S",
+        "en": f"Paylog Platform: Operation confirmation code: {code}\nhy0K00dP38S",
     }
     message = messages.get(lang) or messages["uz"]
     return send_sms(phone, message)
