@@ -464,16 +464,8 @@ class AIChatView(APIView):
         if not message.strip():
             return Response({"message": ["This field may not be blank."]}, status=status.HTTP_400_BAD_REQUEST)
 
-        allowed_phone = getattr(settings, "AI_CHAT_ALLOWED_PHONE", "")
-        if allowed_phone and request.user.phone == allowed_phone:
-            reply = getattr(settings, "AI_CHAT_STATIC_REPLY", "")
-            return Response({"reply": reply}, status=status.HTTP_200_OK)
-
-        try:
-            reply = get_ai_reply(message)
-            return Response({"reply": reply}, status=status.HTTP_200_OK)
-        except OpenAIServiceError as exc:
-            return Response({"detail": str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        reply = getattr(settings, "AI_CHAT_STATIC_REPLY", "Holisa ai tez kunda ishga tushadi")
+        return Response({"reply": reply}, status=status.HTTP_200_OK)
 
 class DeviceRegisterView(APIView):
     permission_classes = [IsAuthenticated]

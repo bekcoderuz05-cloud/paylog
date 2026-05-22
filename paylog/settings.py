@@ -204,7 +204,7 @@ TEST_DELETE_PHONE = os.getenv("TEST_DELETE_PHONE", TEST_LOGIN_PHONE)
 TEST_DELETE_OTP = os.getenv("TEST_DELETE_OTP", "99999")
 OPENAI_API_KEY = 'change_me'
 AI_CHAT_ALLOWED_PHONE = os.getenv("AI_CHAT_ALLOWED_PHONE", "")
-AI_CHAT_STATIC_REPLY = os.getenv("AI_CHAT_STATIC_REPLY", "Salom! Hozir AI chat vaqtincha cheklangan.")
+AI_CHAT_STATIC_REPLY = os.getenv("AI_CHAT_STATIC_REPLY", "Holisa ai tez kunda ishga tushadi")
 FCM_SERVER_KEY = os.getenv("FCM_SERVER_KEY", "")
 
 
